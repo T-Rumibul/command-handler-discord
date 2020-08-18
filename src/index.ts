@@ -24,18 +24,16 @@ interface CommandFile {
 	exec?: Function;
 }
 interface Command {
-	name: string;
 	usage: string;
 	description: string;
 	aliases: Array<string>;
-	builder?: Array<CommandFile>;
+	builder?: Map<string, Command>;
 	delay: number;
 	adminOnly?: boolean;
 	moderOnly?: boolean;
 	ownerOnly?: boolean;
 	exec?: Function;
 }
-
 interface CommandHandler {
 	options: Options;
 	commandsDir: string;
@@ -48,39 +46,42 @@ class CommandHandler extends Events.EventEmitter {
 		this.options = options;
 		this.commandsDir = commandsDir;
 	}
-	private readCommand(file: string, dir: string): Command {
+	private readCommand(file: string, dir: string): { cmdInst: Command; name: string } {
 		log(file);
 		const cmdFile = require(path.resolve(dir, file));
 		const cmdName = file.replace(/\.js|\.ts/, '');
 		const cmd = {
 			name: cmdName,
-			...cmdFile,
-			builder: [],
+			cmdInst: {
+				...cmdFile,
+				builder: new Map(),
+			},
 		};
 		if (cmdFile.builder && cmdFile.builder.length !== 0) {
 			const subCmds = this.readCommandsDir(`${dir}/${cmdName}_builder`);
-			subCmds.forEach((subCmd) => {
+			subCmds.forEach((value, key) => {
 				cmdFile.builder.forEach((subCmdName: string) => {
-					if (subCmd.name === subCmdName) {
-						cmd.builder.push(subCmd);
+					if (key === subCmdName) {
+						cmd.cmdInst.builder.set(key, value);
 					}
 				});
 			});
 		}
 		return cmd;
 	}
-	private readCommandsDir(dir: string) {
+	private readCommandsDir(dir: string = this.commandsDir) {
 		if (!existsSync(path.resolve(dir))) return;
 		const files = readdirSync(path.resolve(dir));
-		const commands: Array<Command> = [];
+		const commands: Map<string, Command> = new Map();
 		files.forEach((file) => {
 			if (lstatSync(path.resolve(dir, file)).isDirectory()) return;
-			commands.push(this.readCommand(file, dir));
+			const cmd = this.readCommand(file, dir);
+			commands.set(cmd.name, cmd.cmdInst);
 		});
 		return commands;
 	}
 	public init() {
-		return this.readCommandsDir(this.commandsDir);
+		this.commands = this.readCommandsDir();
 	}
 }
 
@@ -88,8 +89,8 @@ class CommandHandler extends Events.EventEmitter {
  * @param {options} options
  * @returns {CommandHandler}
  */
-export function init(commandsDir: string, options?: Options): Array<Command> {
-	return new CommandHandler(options, commandsDir).init();
+export function init(commandsDir: string, options?: Options): CommandHandler {
+	return new CommandHandler(options, commandsDir);
 }
 
 export default init;
