@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "lib":[
+      "esnext"
+    ],
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "declaration": true,
+    "types": ["jest", "debug", "node"],
+    "typeRoots": ["./node_modules/@types"],
+    "outDir": "dist",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "sourceMap": false,
+  },
+  "include": ["src/*"],
+  "exclude": ["node_modules", "src/*.test.ts"],
+  
+  }
