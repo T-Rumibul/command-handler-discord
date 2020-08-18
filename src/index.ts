@@ -90,7 +90,10 @@ class CommandHandler extends Events.EventEmitter {
  * @returns {CommandHandler}
  */
 export function init(commandsDir: string, options?: Options): CommandHandler {
-	return new CommandHandler(options, commandsDir);
+	const handler = new CommandHandler(options, commandsDir);
+
+	handler.init();
+	return handler;
 }
 
 export default init;

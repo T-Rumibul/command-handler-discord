@@ -23,7 +23,7 @@
     "scripts": {
         "dev": "set DEBUG=Command:*,-Command:DEEP_INFO && nodemon --exec ts-node src/index.ts",
         "build": "tsc && yarn uglifyjs dist/index.js --comments -o dist/index.js",
-        "dev:test": "jest src/index.test.ts"
+        "dev:test": "set DEBUG=Command:*,-Command:DEEP_INFO && nodemon --exec jest src/index.test.ts"
     },
     "devDependencies": {
         "@types/debug": "^4.1.5",

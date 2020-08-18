@@ -1,6 +1,5 @@
 import CommandHandler from './index';
 const handler = CommandHandler('./test');
-handler.init();
 
 test('Parse directory with commands', () => {
 	expect(handler.commands).toEqual(
