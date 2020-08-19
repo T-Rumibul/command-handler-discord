@@ -104,7 +104,7 @@ class CommandHandler extends Events.EventEmitter {
 	/** Recursively iterater through directory's and files and returns Commands and Aliases*/
 
 	private readCommandsDir(dir: string = this.commandsDir) {
-		if (!existsSync(path.resolve(dir))) return;
+		if (!existsSync(path.resolve(dir))) return { aliases: new Map(), commands: new Map() };
 
 		const files = readdirSync(path.resolve(dir));
 

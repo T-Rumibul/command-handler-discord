@@ -36,11 +36,21 @@ test('Parse directory with commands', () => {
 					delay: 5,
 				},
 			],
+			[
+				'test_cmd_2',
+				{
+					usage: 'test',
+					description: '5',
+					aliases: ['alias_test_2'],
+					builder: new Map(),
+					delay: 5,
+				},
+			],
 		])
 	);
 });
 test('Parse directory with commands', () => {
-	console.log(handler.aliases.get('alias_test').builder.get('alias_test'));
+	console.log(handler.aliases);
 	expect(
 		handler.aliases.get('alias_test').builder.get('alias_test').builder.get('alias_test').name
 	).toBe('test_3');
