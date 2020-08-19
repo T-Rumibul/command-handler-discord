@@ -39,3 +39,9 @@ test('Parse directory with commands', () => {
 		])
 	);
 });
+test('Parse directory with commands', () => {
+	console.log(handler.aliases.get('alias_test').builder.get('alias_test'));
+	expect(
+		handler.aliases.get('alias_test').builder.get('alias_test').builder.get('alias_test').name
+	).toBe('test_3');
+});
