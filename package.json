@@ -26,7 +26,6 @@
         "dev:test": "set DEBUG=Command:*,-Command:DEEP_INFO && nodemon --exec jest src/index.test.ts"
     },
     "devDependencies": {
-        "@types/debug": "^4.1.5",
         "@types/jest": "^26.0.9",
         "@types/node": "^14.6.0",
         "@types/ws": "^7.2.6",
@@ -47,7 +46,6 @@
         "uglify-js": "^3.10.1"
     },
     "dependencies": {
-        "debug": "^4.1.1",
-        "discord-cmd-parser": "^1.0.0"
+        "discord-cmd-parser": "^1.1.4"
     }
 }

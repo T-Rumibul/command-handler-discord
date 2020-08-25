@@ -6,3 +6,4 @@ tsconfig.json
 yarn.lock
 .gitignore
 test
+yarn-error.log

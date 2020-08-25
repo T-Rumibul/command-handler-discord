@@ -49,7 +49,7 @@ test('Parse directory with commands', () => {
 		])
 	);
 });
-test('Parse directory with commands', () => {
+test('Parse aliases', () => {
 	console.log(handler.aliases);
 	expect(
 		handler.aliases.get('alias_test').builder.get('alias_test').builder.get('alias_test').name

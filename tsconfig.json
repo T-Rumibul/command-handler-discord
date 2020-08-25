@@ -10,14 +10,13 @@
     "removeComments": false,
     "preserveConstEnums": true,
     "declaration": true,
-    "types": ["jest", "debug", "node"],
+    "types": ["jest","node"],
     "typeRoots": ["./node_modules/@types"],
     "outDir": "dist",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "sourceMap": false,
+    "sourceMap": false
   },
   "include": ["src/*"],
-  "exclude": ["node_modules", "src/*.test.ts"],
-  
+  "exclude": ["node_modules", "src/*.test.ts"]
   }
