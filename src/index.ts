@@ -80,6 +80,18 @@ export class CommandHandler extends Events.EventEmitter {
 		});
 	}
 
+	public addAdminRole(id: string) {
+		this.adminRoles.push(id);
+	}
+	public addModRole(id: string) {
+		this.modRoles.push(id);
+	}
+	public removeAdminRole(id: string) {
+		this.adminRoles.splice(this.adminRoles.indexOf(id), 1);
+	}
+	public removeModRole(id: string) {
+		this.modRoles.splice(this.modRoles.indexOf(id), 1);
+	}
 	/**
 	 * Parse command from string
 	 * @param {string} string - string to parse

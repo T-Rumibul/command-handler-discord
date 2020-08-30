@@ -1,5 +1,5 @@
 {
-    "name": "command-handler-discord",
+    "name": "command-handler-discordjs",
     "version": "1.0.0",
     "description": "Handler for discord commands",
     "main": "dist/index.js",

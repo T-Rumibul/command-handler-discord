@@ -7,7 +7,7 @@ export function isAdmin(caller: GuildMember, adminRoles?: string[]) {
 		return true;
 	}
 	if (adminRoles.length > 0) {
-		if (caller.roles.cache.find((r) => adminRoles.indexOf(r.name) !== -1)) {
+		if (caller.roles.cache.find((r) => adminRoles.indexOf(r.id) !== -1)) {
 			return true;
 		}
 	}
