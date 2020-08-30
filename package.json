@@ -21,15 +21,15 @@
         "dist/index.d.ts"
     ],
     "scripts": {
-        "dev": "set DEBUG=Command:*,-Command:DEEP_INFO && nodemon --exec ts-node src/index.ts",
-        "build": "tsc && yarn uglifyjs dist/index.js --comments -o dist/index.js",
-        "dev:test": "set DEBUG=Command:*,-Command:DEEP_INFO && nodemon --exec jest src/index.test.ts"
+        "dev": "nodemon --exec ts-node jest",
+        "build": "tsc && yarn uglifyjs-folder dist/ -e  -x .js -o dist --comments"
     },
     "devDependencies": {
         "@types/jest": "^26.0.9",
         "@types/node": "^14.6.0",
         "@types/ws": "^7.2.6",
         "@typescript-eslint/eslint-plugin": "^3.9.0",
+        "discord.js": "^12.3.1",
         "eslint": "6.8.0",
         "eslint-config-airbnb-typescript": "^9.0.0",
         "eslint-config-prettier": "^6.11.0",
@@ -43,9 +43,10 @@
         "ts-jest": "^26.2.0",
         "ts-node": "^8.10.2",
         "typescript": "^3.9.7",
-        "uglify-js": "^3.10.1"
+        "uglify-js": "^3.10.1",
+        "uglifyjs-folder": "^2.0.0"
     },
     "dependencies": {
-        "discord-cmd-parser": "^1.1.4"
+        "discord-cmd-parser": "^1.1.6"
     }
 }

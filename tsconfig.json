@@ -15,6 +15,7 @@
     "outDir": "dist",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
+    "downlevelIteration": true,
     "sourceMap": false
   },
   "include": ["src/*"],
