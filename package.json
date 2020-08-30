@@ -1,5 +1,5 @@
 {
-    "name": "command-handler-discordjs",
+    "name": "command-handler-discord",
     "version": "1.0.0",
     "description": "Handler for discord commands",
     "main": "dist/index.js",
@@ -15,10 +15,6 @@
         "commands",
         "command-hanler",
         "discord-command-handler"
-    ],
-    "files": [
-        "dist/index.js",
-        "dist/index.d.ts"
     ],
     "scripts": {
         "dev": "nodemon --exec ts-node jest",
