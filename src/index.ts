@@ -92,26 +92,45 @@ export class CommandHandler extends Events.EventEmitter {
 	public removeModRole(id: string) {
 		this.modRoles.splice(this.modRoles.indexOf(id), 1);
 	}
+	public hasCommand(command: string) {
+		if (command.length === 0) return false;
+		if (this.commands.has(command)) {
+			return true;
+		}
+		return false;
+	}
+	public hasAlias(command: string) {
+		if (command.length === 0) return false;
+		if (this.aliases.has(command)) {
+			return true;
+		}
+		return false;
+	}
+	public getCommand(command: string) {
+		if (this.hasCommand(command)) {
+			this.commands.get(command);
+		}
+		if (this.hasAlias(command)) {
+			return this.commands.get(this.aliases.get(command).name);
+		}
+	}
 	/**
 	 * Parse command from string
 	 * @param {string} string - string to parse
 	 */
-	public command(string: string): { args: Args; cmds: Command[]; exec: Function } {
+	public command(
+		string: string
+	): { args: Args; cmds: Command[]; exist: Boolean; exec: Function } {
 		const { command, args } = this.parser.getCommand(string).parseArgs();
+		const cmd = this.getCommand(command);
 
-		if (command.length === 0) return { args: { _: [] }, cmds: [], exec: () => {} };
-		let cmd;
-		if (this.commands.has(command)) {
-			cmd = this.commands.get(command);
-		} else if (this.aliases.has(command)) {
-			cmd = this.commands.get(this.aliases.get(command).name);
-		} else return { args: { _: [] }, cmds: [], exec: () => {} };
-
+		if (!cmd) return { args: { _: [] }, cmds: [], exec: () => {}, exist: false };
 		const { args: unamedArgs, cmds } = parseCommandTree(cmd, args._);
 		args._ = unamedArgs;
 		return {
 			args,
 			cmds,
+			exist: true,
 			exec: (caller: GuildMember) => {
 				const commandToExec = cmds[cmds.length - 1];
 				if (!caller) {
@@ -143,7 +162,7 @@ export class CommandHandler extends Events.EventEmitter {
 				}
 				try {
 					this.emit('exec', { command: commandToExec, parrents: cmds, caller: caller });
-					commandToExec.exec(caller);
+					commandToExec.exec(caller, args);
 				} catch (e) {
 					this.emit('error', { status: 'Error', message: e.message });
 				}
