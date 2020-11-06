@@ -18,7 +18,7 @@ npm install command-handler-discord
 const Handler = require('command-handler-discord');
 
 // Initialize with commands directory path and options, command file name will be command name and parser will try to found builder command in with name COMMAND-NAME_builder
-const Handler = Handler.init('./myCommands', {
+const Handler = Handler.createHandler('./myCommands', {
   pefix: "!", // see https://www.npmjs.com/package/discord-cmd-parser
   useQuotes: true, // see https://www.npmjs.com/package/discord-cmd-parser
   namedSeparator: "-", // see https://www.npmjs.com/package/discord-cmd-parser
