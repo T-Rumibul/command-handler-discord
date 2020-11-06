@@ -1,5 +1,5 @@
 import Events from 'events';
-import { Parser, init as parser } from 'discord-cmd-parser';
+import { Parser, createParser } from 'discord-cmd-parser';
 import { readCommandsDir } from './functions/readCommandsDir';
 import { parseCommandTree } from './functions/parseCommandTree';
 import { checkParentPermission } from './functions/checkParentPermission';
@@ -72,7 +72,7 @@ export class CommandHandler extends Events.EventEmitter {
 		const { aliases, commands } = readCommandsDir(this.commandsDir);
 		this.commands = commands;
 		this.aliases = aliases;
-		this.parser = parser({
+		this.parser = createParser({
 			prefix: this.prefix,
 			useQuotes: this.useQuotes,
 			quotesType: this.quotesType,
@@ -108,7 +108,7 @@ export class CommandHandler extends Events.EventEmitter {
 	}
 	public getCommand(command: string) {
 		if (this.hasCommand(command)) {
-			this.commands.get(command);
+			return this.commands.get(command);
 		}
 		if (this.hasAlias(command)) {
 			return this.commands.get(this.aliases.get(command).name);
@@ -123,8 +123,8 @@ export class CommandHandler extends Events.EventEmitter {
 	): { args: Args; cmds: Command[]; exist: Boolean; exec: Function } {
 		const { command, args } = this.parser.getCommand(string).parseArgs();
 		const cmd = this.getCommand(command);
-
 		if (!cmd) return { args: { _: [] }, cmds: [], exec: () => {}, exist: false };
+		
 		const { args: unamedArgs, cmds } = parseCommandTree(cmd, args._);
 		args._ = unamedArgs;
 		return {
@@ -175,8 +175,8 @@ export class CommandHandler extends Events.EventEmitter {
  * @param {options} options
  * @returns {CommandHandler}
  */
-export function init(commandsDir: string, options: Options = {}): CommandHandler {
+export function createHandler(commandsDir: string, options: Options = {}): CommandHandler {
 	return new CommandHandler(options, commandsDir);
 }
 
-export default init;
+export default createHandler;

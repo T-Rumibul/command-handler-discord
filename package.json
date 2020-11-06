@@ -43,6 +43,6 @@
         "uglifyjs-folder": "^2.0.0"
     },
     "dependencies": {
-        "discord-cmd-parser": "^1.1.6"
+        "discord-cmd-parser": "^1.1.8"
     }
 }

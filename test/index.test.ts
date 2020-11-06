@@ -1,6 +1,65 @@
 import CommandHandler from '../src/';
 const handler = CommandHandler('./test/test_cmds');
 
+
+test('Method command using alias', () => {
+	const { args, cmds } = handler.command('!alias_test test_2');
+	expect({ args: args, cmds: cmds }).toEqual({
+		args: { _: [] },
+		cmds: [
+			{
+				usage: 'test',
+				description: '5',
+				aliases: ['alias_test'],
+				builder: new Map([
+					[
+						'test_2',
+						{
+							usage: 'test',
+							description: '5',
+							aliases: ['alias_test_2'],
+							delay: 5,
+							builder: new Map([
+								[
+									'test_3',
+									{
+										usage: 'test',
+										description: '5',
+										aliases: ['alias_test'],
+										delay: 5,
+										builder: new Map(),
+									},
+								],
+							]),
+						},
+					],
+				]),
+				delay: 5,
+			},
+			{
+				usage: 'test',
+				description: '5',
+				aliases: ['alias_test_2'],
+				delay: 5,
+				builder: new Map([
+					[
+						'test_3',
+						{
+							usage: 'test',
+							description: '5',
+							aliases: ['alias_test'],
+							delay: 5,
+							builder: new Map(),
+						},
+					],
+				]),
+			},
+		],
+	});
+});
+
+
+
 test('Parse directory with commands', () => {
 	expect(handler.commands).toEqual(
 		new Map([
@@ -112,61 +171,6 @@ test('Method command', () => {
 	});
 });
 
-test('Method command using alias', () => {
-	const { args, cmds } = handler.command('!alias_test test_2');
-	expect({ args: args, cmds: cmds }).toEqual({
-		args: { _: [] },
-		cmds: [
-			{
-				usage: 'test',
-				description: '5',
-				aliases: ['alias_test'],
-				builder: new Map([
-					[
-						'test_2',
-						{
-							usage: 'test',
-							description: '5',
-							aliases: ['alias_test_2'],
-							delay: 5,
-							builder: new Map([
-								[
-									'test_3',
-									{
-										usage: 'test',
-										description: '5',
-										aliases: ['alias_test'],
-										delay: 5,
-										builder: new Map(),
-									},
-								],
-							]),
-						},
-					],
-				]),
-				delay: 5,
-			},
-			{
-				usage: 'test',
-				description: '5',
-				aliases: ['alias_test_2'],
-				delay: 5,
-				builder: new Map([
-					[
-						'test_3',
-						{
-							usage: 'test',
-							description: '5',
-							aliases: ['alias_test'],
-							delay: 5,
-							builder: new Map(),
-						},
-					],
-				]),
-			},
-		],
-	});
-});
 
 test('Method command using two aliases', () => {
 	const { args, cmds } = handler.command('!alias_test alias_test_2');

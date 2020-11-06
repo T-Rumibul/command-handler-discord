@@ -1,11 +1,10 @@
 import { readCommandsDir } from './readCommandsDir';
 import path from 'path';
 import { Alias, Command, CommandFile } from '../index';
-
-export function readCommand(
-	file: string,
-	dir: string
-): { cmdInst: Command; aliases: Map<string, Alias>; name: string } {
+export interface readCommand {
+	(file: string, dir: string) : { cmdInst: Command; aliases: Map<string, Alias>; name: string }
+}
+export const readCommand: readCommand = (file, dir) => {
 	const cmdFile: CommandFile = require(path.resolve(dir, file));
 	// replace file extensions
 	const cmdName = file.replace(/\.js|\.ts/, '');
