@@ -283,3 +283,117 @@ test('Method command using two aliases with args', () => {
 		],
 	});
 });
+const handlerArray = CommandHandler(['./test/test_cmds', './test/test_cmds_another']);
+
+
+test('Pass Dirs As Array', () => {
+	const { args, cmds } = handlerArray.command('!alias_test alias_test_2 someArgs -ddd someArg');
+	expect({ args: args, cmds: cmds }).toEqual({
+		args: { _: ['someargs'], ddd: 'somearg' },
+		cmds: [
+			{
+				usage: 'test',
+				description: '5',
+				aliases: ['alias_test'],
+				builder: new Map([
+					[
+						'test_2',
+						{
+							usage: 'test',
+							description: '5',
+							aliases: ['alias_test_2'],
+							delay: 5,
+							builder: new Map([
+								[
+									'test_3',
+									{
+										usage: 'test',
+										description: '5',
+										aliases: ['alias_test'],
+										delay: 5,
+										builder: new Map(),
+									},
+								],
+							]),
+						},
+					],
+				]),
+				delay: 5,
+			},
+			{
+				usage: 'test',
+				description: '5',
+				aliases: ['alias_test_2'],
+				delay: 5,
+				builder: new Map([
+					[
+						'test_3',
+						{
+							usage: 'test',
+							description: '5',
+							aliases: ['alias_test'],
+							delay: 5,
+							builder: new Map(),
+						},
+					],
+				]),
+			},
+		],
+	});
+});
+
+test('Pass Dirs As Array Second Dir', () => {
+	const { args, cmds } = handlerArray.command('!alias_test_another alias_test_2_another someArgs -ddd someArg');
+	expect({ args: args, cmds: cmds }).toEqual({
+		args: { _: ['someargs'], ddd: 'somearg' },
+		cmds: [
+			{
+				usage: 'test',
+				description: '5',
+				aliases: ['alias_test_another'],
+				builder: new Map([
+					[
+						'test_2_another',
+						{
+							usage: 'test',
+							description: '5',
+							aliases: ['alias_test_2_another'],
+							delay: 5,
+							builder: new Map([
+								[
+									'test_3_another',
+									{
+										usage: 'test',
+										description: '5',
+										aliases: ['alias_test_another'],
+										delay: 5,
+										builder: new Map(),
+									},
+								],
+							]),
+						},
+					],
+				]),
+				delay: 5,
+			},
+			{
+				usage: 'test',
+				description: '5',
+				aliases: ['alias_test_2_another'],
+				delay: 5,
+				builder: new Map([
+					[
+						'test_3_another',
+						{
+							usage: 'test',
+							description: '5',
+							aliases: ['alias_test_another'],
+							delay: 5,
+							builder: new Map(),
+						},
+					],
+				]),
+			},
+		],
+	});
+});

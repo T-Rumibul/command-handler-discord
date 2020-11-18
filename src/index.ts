@@ -52,14 +52,14 @@ export interface CommandHandler {
 	checkParentPermission: boolean;
 	adminRoles: string[];
 	modRoles: string[];
-	commandsDir: string;
+	commandsDir: string | Array<string>;
 	commands: Map<string, Command>;
 	aliases: Map<string, Alias>;
 	parser: Parser;
 }
 
 export class CommandHandler extends Events.EventEmitter {
-	constructor(options: Options, commandsDir: string) {
+	constructor(options: Options, commandsDir: string | Array<string>) {
 		super();
 		this.prefix = options.prefix || '!';
 		this.useQuotes = options.useQuotes || true;
@@ -175,7 +175,7 @@ export class CommandHandler extends Events.EventEmitter {
  * @param {options} options
  * @returns {CommandHandler}
  */
-export function createHandler(commandsDir: string, options: Options = {}): CommandHandler {
+export function createHandler(commandsDir: string | Array<string>, options: Options = {}): CommandHandler {
 	return new CommandHandler(options, commandsDir);
 }
 
