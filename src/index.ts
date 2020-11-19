@@ -71,20 +71,56 @@ export class CommandHandler extends Events.EventEmitter {
 	public get Commands() {
 		return this.commands;
 	}
+	public get Prefix() {
+		return this.prefix;
+	}
+	public get UseQuotes() {
+		return this.useQuotes;
+	}
+	public get QuotesType() {
+		return this.quotesType;
+	}
+	public get NamedSeparator() {
+		return this.namedSeparator;
+	}
 	public get Aliases() {
 		return this.aliases
 	}
 	public setPrefix(prefix: string): void {
 		this.prefix = prefix
+		this.parser = createParser({
+			prefix: this.prefix,
+			useQuotes: this.useQuotes,
+			quotesType: this.quotesType,
+			namedSeparator: this.namedSeparator,
+		});
 	}
 	public disableQuotes(): void {
 		this.useQuotes = false
+		this.parser = createParser({
+			prefix: this.prefix,
+			useQuotes: this.useQuotes,
+			quotesType: this.quotesType,
+			namedSeparator: this.namedSeparator,
+		});
 	}
 	public enableQuotes(): void {
 		this.useQuotes = true
+		this.parser = createParser({
+			prefix: this.prefix,
+			useQuotes: this.useQuotes,
+			quotesType: this.quotesType,
+			namedSeparator: this.namedSeparator,
+		});
 	}
 	public setNamedSeparator(separator: string): void {
 		this.namedSeparator = separator
+		this.parser = createParser({
+			prefix: this.prefix,
+			useQuotes: this.useQuotes,
+			quotesType: this.quotesType,
+			namedSeparator: this.namedSeparator,
+		});
 	}
 	public reinit(commandsDir: string | Array<string>) {
 		this.commandsDir = commandsDir
@@ -129,7 +165,7 @@ export class CommandHandler extends Events.EventEmitter {
 			const { command, args } = this.parser.getCommand(string).parseArgs();
 			const cmd = this.getCommand(command);
 			if (!cmd) return reject('Command not found.');
-			
+			console.log(args)
 			const { args: unamedArgs, cmds } = parseCommandTree(cmd, args._);
 			args._ = unamedArgs;
 			return resolve( {

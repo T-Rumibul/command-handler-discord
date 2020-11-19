@@ -3,9 +3,9 @@ const handler = CommandHandler('./test/test_cmds');
 
 
 test('Method command using alias', async () => {
-	const { args, cmds } = await handler.command('!alias_test test_2');
+	const { args, cmds } = await handler.command('!alias_test test_2 |');
 	expect({ args: args, cmds: cmds }).toEqual({
-		args: { _: [] },
+		args: { _: ["|"] },
 		cmds: [
 			{
 				usage: 'test',
