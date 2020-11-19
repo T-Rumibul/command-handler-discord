@@ -2,10 +2,10 @@ import Events from 'events';
 import { Parser, createParser } from 'discord-cmd-parser';
 import { readCommandsDir } from './functions/readCommandsDir';
 import { parseCommandTree } from './functions/parseCommandTree';
-import { checkParentPermission } from './functions/checkParentPermission';
 import { GuildMember } from 'discord.js';
-import { checkCmdPermission } from './functions/checkCmdPermission';
 import { args as Args } from 'discord-cmd-parser';
+import { resolve } from 'path';
+import { rejects } from 'assert';
 export interface CommandFile {
 	usage: string;
 	description: string;
@@ -39,74 +39,73 @@ export interface Options {
 	useQuotes?: boolean;
 	quotesType?: string;
 	namedSeparator?: string;
-	checkParentPermission?: boolean;
-	adminRoles?: string[];
-	modRoles?: string[];
 }
 
-export interface CommandHandler {
-	prefix: string;
-	useQuotes: boolean;
-	quotesType: string;
-	namedSeparator: string;
-	checkParentPermission: boolean;
-	adminRoles: string[];
-	modRoles: string[];
-	commandsDir: string | Array<string>;
-	commands: Map<string, Command>;
-	aliases: Map<string, Alias>;
-	parser: Parser;
-}
+
 
 export class CommandHandler extends Events.EventEmitter {
+	private prefix: string;
+	private useQuotes: boolean;
+	private quotesType: string;
+	private namedSeparator: string;
+	private commandsDir: string | Array<string>;
+	private commands: Map<string, Command>;
+	private aliases: Map<string, Alias>;
+	private parser : Parser;
 	constructor(options: Options, commandsDir: string | Array<string>) {
 		super();
 		this.prefix = options.prefix || '!';
 		this.useQuotes = options.useQuotes || true;
 		this.quotesType = options.quotesType || '"';
 		this.namedSeparator = options.namedSeparator || '-';
-		this.checkParentPermission = options.checkParentPermission || true;
-		this.adminRoles = options.adminRoles || [];
-		this.modRoles = options.modRoles || [];
 		this.commandsDir = commandsDir;
-		const { aliases, commands } = readCommandsDir(this.commandsDir);
-		this.commands = commands;
-		this.aliases = aliases;
+		
 		this.parser = createParser({
 			prefix: this.prefix,
 			useQuotes: this.useQuotes,
 			quotesType: this.quotesType,
 			namedSeparator: this.namedSeparator,
 		});
+		this.init()
 	}
-
-	public addAdminRole(id: string) {
-		this.adminRoles.push(id);
+	public get Commands() {
+		return this.commands;
 	}
-	public addModRole(id: string) {
-		this.modRoles.push(id);
+	public get Aliases() {
+		return this.aliases
 	}
-	public removeAdminRole(id: string) {
-		this.adminRoles.splice(this.adminRoles.indexOf(id), 1);
+	public setPrefix(prefix: string): void {
+		this.prefix = prefix
 	}
-	public removeModRole(id: string) {
-		this.modRoles.splice(this.modRoles.indexOf(id), 1);
+	public disableQuotes(): void {
+		this.useQuotes = false
 	}
-	public hasCommand(command: string) {
+	public enableQuotes(): void {
+		this.useQuotes = true
+	}
+	public setNamedSeparator(separator: string): void {
+		this.namedSeparator = separator
+	}
+	public reinit(commandsDir: string | Array<string>) {
+		this.commandsDir = commandsDir
+		this.init()
+	}
+	private hasCommand(command: string) {
 		if (command.length === 0) return false;
 		if (this.commands.has(command)) {
 			return true;
 		}
 		return false;
 	}
-	public hasAlias(command: string) {
+	
+	private hasAlias(command: string) {
 		if (command.length === 0) return false;
 		if (this.aliases.has(command)) {
 			return true;
 		}
 		return false;
 	}
-	public getCommand(command: string) {
+	private getCommand(command: string) {
 		if (this.hasCommand(command)) {
 			return this.commands.get(command);
 		}
@@ -114,60 +113,45 @@ export class CommandHandler extends Events.EventEmitter {
 			return this.commands.get(this.aliases.get(command).name);
 		}
 	}
+	private init(): void {
+		const { aliases, commands } = readCommandsDir(this.commandsDir);
+		this.commands = commands;
+		this.aliases = aliases;
+	}
 	/**
 	 * Parse command from string
 	 * @param {string} string - string to parse
 	 */
 	public command(
 		string: string
-	): { args: Args; cmds: Command[]; exist: Boolean; exec: Function } {
-		const { command, args } = this.parser.getCommand(string).parseArgs();
-		const cmd = this.getCommand(command);
-		if (!cmd) return { args: { _: [] }, cmds: [], exec: () => {}, exist: false };
-		
-		const { args: unamedArgs, cmds } = parseCommandTree(cmd, args._);
-		args._ = unamedArgs;
-		return {
-			args,
-			cmds,
-			exist: true,
-			exec: (caller: GuildMember) => {
-				const commandToExec = cmds[cmds.length - 1];
-				if (!caller) {
-					return this.emit('error', { status: 'Error', message: 'Caller is required' });
-				}
-				if (this.checkParentPermission) {
-					if (
-						!checkParentPermission(cmds, caller, {
-							adminRoles: this.adminRoles,
-							modRoles: this.modRoles,
-						})
-					)
-						return this.emit('reject', {
-							status: 'Reject',
-							message: 'Caller does not have required permissions',
-						});
-				} else {
-					if (
-						!checkCmdPermission(commandToExec, caller, {
-							adminRoles: this.adminRoles,
-							modRoles: this.modRoles,
-						})
-					) {
-						return this.emit('reject', {
-							status: 'Reject',
-							message: 'Caller does not have required permissions',
-						});
+	): Promise<{ args: Args; cmd:Command, cmds: Command[]; exist: Boolean; exec: Function }> {
+		return new Promise((resolve, reject) => {
+			const { command, args } = this.parser.getCommand(string).parseArgs();
+			const cmd = this.getCommand(command);
+			if (!cmd) return reject('Command not found.');
+			
+			const { args: unamedArgs, cmds } = parseCommandTree(cmd, args._);
+			args._ = unamedArgs;
+			return resolve( {
+				args,
+				cmd: cmds[cmds.length - 1],
+				cmds,
+				exist: true,
+				exec: (caller: GuildMember) => {
+					const commandToExec = cmds[cmds.length - 1];
+					if (!caller) {
+						return this.emit('error', { status: 'Error', message: 'Caller is required' });
 					}
-				}
-				try {
-					this.emit('exec', { command: commandToExec, parrents: cmds, caller: caller });
-					commandToExec.exec(caller, args);
-				} catch (e) {
-					this.emit('error', { status: 'Error', message: e.message });
-				}
-			},
-		};
+					try {
+						this.emit('exec', { command: commandToExec, parrents: cmds, caller: caller });
+						commandToExec.exec(caller, args);
+					} catch (e) {
+						this.emit('error', { status: 'Error', message: e.message });
+					}
+				},
+			})
+		
+		})
 	}
 }
 

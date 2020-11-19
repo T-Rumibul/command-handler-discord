@@ -2,8 +2,8 @@ import CommandHandler from '../src/';
 const handler = CommandHandler('./test/test_cmds');
 
 
-test('Method command using alias', () => {
-	const { args, cmds } = handler.command('!alias_test test_2');
+test('Method command using alias', async () => {
+	const { args, cmds } = await handler.command('!alias_test test_2');
 	expect({ args: args, cmds: cmds }).toEqual({
 		args: { _: [] },
 		cmds: [
@@ -60,8 +60,8 @@ test('Method command using alias', () => {
 
 
 
-test('Parse directory with commands', () => {
-	expect(handler.commands).toEqual(
+test('Parse directory with commands', async () => {
+	expect(handler.Commands).toEqual(
 		new Map([
 			[
 				'test_cmd',
@@ -108,14 +108,14 @@ test('Parse directory with commands', () => {
 		])
 	);
 });
-test('Parse aliases', () => {
+test('Parse aliases', async () => {
 	expect(
-		handler.aliases.get('alias_test').builder.get('alias_test_2').builder.get('alias_test').name
+		handler.Aliases.get('alias_test').builder.get('alias_test_2').builder.get('alias_test').name
 	).toBe('test_3');
 });
 
-test('Method command', () => {
-	const { args, cmds } = handler.command('!test_cmd test_2');
+test('Method command', async () => {
+	const { args, cmds } = await handler.command('!test_cmd test_2');
 
 	expect({ args: args, cmds: cmds }).toEqual({
 		args: { _: [] },
@@ -172,8 +172,8 @@ test('Method command', () => {
 });
 
 
-test('Method command using two aliases', () => {
-	const { args, cmds } = handler.command('!alias_test alias_test_2');
+test('Method command using two aliases', async () => {
+	const { args, cmds } = await handler.command('!alias_test alias_test_2');
 	expect({ args: args, cmds: cmds }).toEqual({
 		args: { _: [] },
 		cmds: [
@@ -228,8 +228,8 @@ test('Method command using two aliases', () => {
 	});
 });
 
-test('Method command using two aliases with args', () => {
-	const { args, cmds } = handler.command('!alias_test alias_test_2 someArgs -ddd someArg');
+test('Method command using two aliases with args', async () => {
+	const { args, cmds } = await handler.command('!alias_test alias_test_2 someArgs -ddd someArg');
 	expect({ args: args, cmds: cmds }).toEqual({
 		args: { _: ['someargs'], ddd: 'somearg' },
 		cmds: [
@@ -286,8 +286,8 @@ test('Method command using two aliases with args', () => {
 const handlerArray = CommandHandler(['./test/test_cmds', './test/test_cmds_another']);
 
 
-test('Pass Dirs As Array', () => {
-	const { args, cmds } = handlerArray.command('!alias_test alias_test_2 someArgs -ddd someArg');
+test('Pass Dirs As Array', async () => {
+	const { args, cmds } = await handlerArray.command('!alias_test alias_test_2 someArgs -ddd someArg');
 	expect({ args: args, cmds: cmds }).toEqual({
 		args: { _: ['someargs'], ddd: 'somearg' },
 		cmds: [
@@ -342,8 +342,8 @@ test('Pass Dirs As Array', () => {
 	});
 });
 
-test('Pass Dirs As Array Second Dir', () => {
-	const { args, cmds } = handlerArray.command('!alias_test_another alias_test_2_another someArgs -ddd someArg');
+test('Pass Dirs As Array Second Dir', async () => {
+	const { args, cmds } = await handlerArray.command('!alias_test_another alias_test_2_another someArgs -ddd someArg');
 	expect({ args: args, cmds: cmds }).toEqual({
 		args: { _: ['someargs'], ddd: 'somearg' },
 		cmds: [

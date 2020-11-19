@@ -42,9 +42,10 @@ export const readCommand: readCommand = (file, dir) => {
 	}
 
 	// iterate through array with command aliases and asign each to aliases property
+	if(cmd.cmdInst.aliases) {
 	cmd.cmdInst.aliases.forEach((alias: string) => {
 		cmd.aliases.set(alias, { name: cmd.name, builder: builderAliases });
 	});
-
+	}
 	return cmd;
 }
