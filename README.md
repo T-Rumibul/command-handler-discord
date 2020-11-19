@@ -56,7 +56,7 @@ Handler.command("!test test_2") // Will return promise, promise will be resolved
   args // args without command names and alises see https://www.npmjs.com/package/discord-cmd-parser
   cmd // there will be the test_2 command object
   cmds // array of commands, that are the chain to invoked command, in that case there will be [test command object, test_2 command object]
-  exec(caller: GuildMember) //  will invoke exec function from test_2 command
+  exec(caller: GuildMember, ?customArgs: any) //  will invoke exec function from test_2 command
 }
 
 ```

@@ -137,14 +137,14 @@ export class CommandHandler extends Events.EventEmitter {
 				cmd: cmds[cmds.length - 1],
 				cmds,
 				exist: true,
-				exec: (caller: GuildMember) => {
+				exec: (caller: GuildMember, customArgs: any) => {
 					const commandToExec = cmds[cmds.length - 1];
 					if (!caller) {
 						return this.emit('error', { status: 'Error', message: 'Caller is required' });
 					}
 					try {
 						this.emit('exec', { command: commandToExec, parrents: cmds, caller: caller });
-						commandToExec.exec(caller, args);
+						commandToExec.exec(caller, args, customArgs);
 					} catch (e) {
 						this.emit('error', { status: 'Error', message: e.message });
 					}
