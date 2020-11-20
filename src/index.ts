@@ -42,8 +42,7 @@ export interface Options {
 }
 
 
-
-export class CommandHandler extends Events.EventEmitter {
+export class CommandHandler {
 	private prefix: string;
 	private useQuotes: boolean;
 	private quotesType: string;
@@ -53,7 +52,6 @@ export class CommandHandler extends Events.EventEmitter {
 	private aliases: Map<string, Alias>;
 	private parser : Parser;
 	constructor(options: Options, commandsDir: string | Array<string>) {
-		super();
 		this.prefix = options.prefix || '!';
 		this.useQuotes = options.useQuotes || true;
 		this.quotesType = options.quotesType || '"';
@@ -158,14 +156,12 @@ export class CommandHandler extends Events.EventEmitter {
 	 * Parse command from string
 	 * @param {string} string - string to parse
 	 */
-	public command(
-		string: string
-	): Promise<{ args: Args; cmd:Command, cmds: Command[]; exist: Boolean; exec: Function }> {
+	public command(string: string): Promise<{ args: Args; cmd: Command, cmds: Command[]; exist: Boolean; exec: Function }> {
 		return new Promise((resolve, reject) => {
 			const { command, args } = this.parser.getCommand(string).parseArgs();
 			const cmd = this.getCommand(command);
 			if (!cmd) return reject('Command not found.');
-			console.log(args)
+
 			const { args: unamedArgs, cmds } = parseCommandTree(cmd, args._);
 			args._ = unamedArgs;
 			return resolve( {
@@ -174,16 +170,10 @@ export class CommandHandler extends Events.EventEmitter {
 				cmds,
 				exist: true,
 				exec: (caller: GuildMember, customArgs: any) => {
-					const commandToExec = cmds[cmds.length - 1];
 					if (!caller) {
-						return this.emit('error', { status: 'Error', message: 'Caller is required' });
-					}
-					try {
-						this.emit('exec', { command: commandToExec, parrents: cmds, caller: caller });
-						commandToExec.exec(caller, args, customArgs);
-					} catch (e) {
-						this.emit('error', { status: 'Error', message: e.message });
-					}
+						return;
+					}	
+					return cmd.exec(caller, args, customArgs);
 				},
 			})
 		

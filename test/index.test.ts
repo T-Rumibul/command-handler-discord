@@ -105,6 +105,26 @@ test('Parse directory with commands', async () => {
 					delay: 5,
 				},
 			],
+			[
+				'test_cmd_no_alias',
+				{
+					usage: 'test',
+					description: '5',
+					builder: new Map([
+						[
+							'test_cmd_2',
+							{
+								usage: 'test',
+								description: '5',
+								builder: new Map(),
+								delay: 5,
+								
+							}
+						]
+					]),
+					delay: 5,
+				},
+			],
 		])
 	);
 });
@@ -394,6 +414,33 @@ test('Pass Dirs As Array Second Dir', async () => {
 					],
 				]),
 			},
+		],
+	});
+});
+
+
+test('No alias test', async () => {
+	const { args, cmds } = await handlerArray.command('!test_cmd_no_alias someArgs -ddd someArg');
+	expect({ args: args, cmds: cmds }).toEqual({
+		args: { _: ['someargs'], ddd: 'somearg' },
+		cmds: [
+			{
+				usage: 'test',
+				description: '5',
+				builder: new Map([
+					[
+						'test_cmd_2',
+						{
+							usage: 'test',
+							description: '5',
+							builder: new Map(),
+							delay: 5,
+							
+						}
+					]
+				]),
+				delay: 5,
+			}
 		],
 	});
 });

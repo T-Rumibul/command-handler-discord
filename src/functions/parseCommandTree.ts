@@ -14,7 +14,7 @@ export const parseCommandTree: parseCommandTree = (cmd, args,cmds?) => {
 		parseCommandTree(cmd.builder.get(args.shift()), args, cmds);
 	} else {
 		for (let [key, value] of cmd.builder) {
-			if (value.aliases.indexOf(args[0]) !== -1) {
+			if (value.aliases && value.aliases.indexOf(args[0]) !== -1) {
 				args.shift();
 				return parseCommandTree(value, args, cmds);
 			}
