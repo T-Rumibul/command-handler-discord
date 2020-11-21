@@ -158,6 +158,7 @@ export class CommandHandler {
 	 */
 	public command(string: string): Promise<{ args: Args; cmd: Command, cmds: Command[]; exist: Boolean; exec: Function }> {
 		return new Promise((resolve, reject) => {
+			if (!this.parser.hasPrefix(string)) return;
 			const { command, args } = this.parser.getCommand(string).parseArgs();
 			const cmd = this.getCommand(command);
 			if (!cmd) return reject('Command not found.');
