@@ -169,11 +169,11 @@ export class CommandHandler {
 				cmd: cmds[cmds.length - 1],
 				cmds,
 				exist: true,
-				exec: (caller: GuildMember, customArgs: any) => {
+				exec(caller: GuildMember, customArgs: any) {
 					if (!caller) {
 						return;
 					}	
-					return cmd.exec(caller, args, customArgs);
+					return cmds[cmds.length - 1].exec(caller, args, customArgs);
 				},
 			})
 		
