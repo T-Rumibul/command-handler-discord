@@ -1,6 +1,6 @@
 {
     "name": "command-handler-discord",
-    "version": "2.0.7",
+    "version": "2.0.8",
     "description": "Handler for discord commands",
     "main": "dist/index.js",
     "author": "RynerNO",
