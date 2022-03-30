@@ -1,11 +1,7 @@
-import Events from 'events';
 import { Parser, createParser } from 'discord-cmd-parser';
 import { readCommandsDir } from './functions/readCommandsDir';
 import { parseCommandTree } from './functions/parseCommandTree';
 import { GuildMember } from 'discord.js';
-import { args as Args } from 'discord-cmd-parser';
-import { resolve } from 'path';
-import { rejects } from 'assert';
 export interface CommandFile {
 	usage: string;
 	description: string;
@@ -15,7 +11,7 @@ export interface CommandFile {
 	adminOnly?: boolean;
 	moderOnly?: boolean;
 	ownerOnly?: boolean;
-	exec?: Function;
+	exec: Function;
 }
 export interface Command {
 	usage: string;
@@ -26,7 +22,7 @@ export interface Command {
 	adminOnly?: boolean;
 	moderOnly?: boolean;
 	ownerOnly?: boolean;
-	exec?: Function;
+	exec: Function;
 }
 
 export interface Alias {
@@ -57,12 +53,11 @@ export class CommandHandler {
 		this.quotesType = options.quotesType || '"';
 		this.namedSeparator = options.namedSeparator || '-';
 		this.commandsDir = commandsDir;
-		
+		this.commands = new Map();
+		this.aliases = new Map();
 		this.parser = createParser({
-			prefix: this.prefix,
 			useQuotes: this.useQuotes,
-			quotesType: this.quotesType,
-			namedSeparator: this.namedSeparator,
+			quotesType: this.quotesType,	
 		});
 		this.init()
 	}
@@ -87,37 +82,31 @@ export class CommandHandler {
 	public setPrefix(prefix: string): void {
 		this.prefix = prefix
 		this.parser = createParser({
-			prefix: this.prefix,
 			useQuotes: this.useQuotes,
 			quotesType: this.quotesType,
-			namedSeparator: this.namedSeparator,
 		});
 	}
 	public disableQuotes(): void {
 		this.useQuotes = false
 		this.parser = createParser({
-			prefix: this.prefix,
 			useQuotes: this.useQuotes,
 			quotesType: this.quotesType,
-			namedSeparator: this.namedSeparator,
 		});
 	}
 	public enableQuotes(): void {
 		this.useQuotes = true
 		this.parser = createParser({
-			prefix: this.prefix,
 			useQuotes: this.useQuotes,
 			quotesType: this.quotesType,
-			namedSeparator: this.namedSeparator,
+			
 		});
 	}
 	public setNamedSeparator(separator: string): void {
 		this.namedSeparator = separator
 		this.parser = createParser({
-			prefix: this.prefix,
 			useQuotes: this.useQuotes,
 			quotesType: this.quotesType,
-			namedSeparator: this.namedSeparator,
+			
 		});
 	}
 	public reinit(commandsDir: string | Array<string>) {
@@ -144,7 +133,7 @@ export class CommandHandler {
 			return this.commands.get(command);
 		}
 		if (this.hasAlias(command)) {
-			return this.commands.get(this.aliases.get(command).name);
+			return this.commands.get(this.aliases.get(command)!.name);
 		}
 	}
 	private init(): void {
@@ -152,29 +141,32 @@ export class CommandHandler {
 		this.commands = commands;
 		this.aliases = aliases;
 	}
+	private hasPrefix(prefix:string, string: string) {
+		if (string.trim().slice(0, prefix.length) !== prefix) return false;
+		return true;
+	}
 	/**
 	 * Parse command from string
 	 * @param {string} string - string to parse
 	 */
-	public command(string: string): Promise<{ args: Args; cmd: Command, cmds: Command[]; exist: Boolean; exec: Function }> {
+	public command(prefix: string, string: string): Promise<{ exist: Boolean; exec: Function }> {
 		return new Promise((resolve, reject) => {
-			if (!this.parser.hasPrefix(string)) return;
-			const { command, args } = this.parser.getCommand(string).parseArgs();
-			const cmd = this.getCommand(command);
+			if (!this.hasPrefix(prefix, string)) return;
+			let args = this.parser.parse(string)
+			if(args.length === 0) return;
+			let cmd = this.getCommand(args.shift()!.trim().slice(prefix.length));
 			if (!cmd) return reject('Command not found.');
 
-			const { args: unamedArgs, cmds } = parseCommandTree(cmd, args._);
-			args._ = unamedArgs;
+			const parseResult = parseCommandTree(cmd, args);
+			args = parseResult.args;
+			cmd = parseResult.cmds[parseResult.cmds.length - 1]
 			return resolve( {
-				args,
-				cmd: cmds[cmds.length - 1],
-				cmds,
 				exist: true,
-				exec(caller: GuildMember, customArgs: any) {
-					if (!caller) {
+				exec(caller: GuildMember) {
+					if (!caller || !cmd ) {
 						return;
 					}	
-					return cmds[cmds.length - 1].exec(caller, args, customArgs);
+					return cmd.exec(caller, args);
 				},
 			})
 		

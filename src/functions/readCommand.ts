@@ -1,10 +1,8 @@
 import { readCommandsDir } from './readCommandsDir';
 import path from 'path';
 import { Alias, Command, CommandFile } from '../index';
-export interface readCommand {
-	(file: string, dir: string) : { cmdInst: Command; aliases: Map<string, Alias>; name: string }
-}
-export const readCommand: readCommand = (file, dir) => {
+
+export function readCommand(file: string, dir: string):  { cmdInst: Command; aliases: Map<string, Alias>; name: string } {
 	const cmdFile: CommandFile = require(path.resolve(dir, file));
 	// replace file extensions
 	const cmdName = file.replace(/\.js|\.ts/, '');
@@ -23,7 +21,7 @@ export const readCommand: readCommand = (file, dir) => {
 		const subCmds = readCommandsDir(`${dir}/${cmdName}_builder`);
 		// iterate through array of cmd's and check if such builder command exists
 		subCmds.commands.forEach((value, key) => {
-			cmdFile.builder.forEach((subCmdName: string) => {
+			cmdFile.builder!.forEach((subCmdName: string) => {
 				if (key === subCmdName) {
 					cmd.cmdInst.builder.set(key, value);
 
