@@ -1,7 +1,7 @@
   
 
 # Command handler discord
- [![NPM](https://img.shields.io/npm/l/command-handler-discord?style=for-the-badge)](https://github.com/RynerNO/command-handler-discord/blob/master/LICENSE) [![donate](https://img.shields.io/badge/donate-Buy%20me%20a%20beer-FF5E5B?style=for-the-badge)](https://www.donationalerts.com/r/rynerno) [![discord](https://img.shields.io/badge/JOIN-DISCORD-7289DA?style=for-the-badge)](https://discord.gg/75NmVJa)
+ [![NPM](https://img.shields.io/npm/l/command-handler-discord?style=for-the-badge)](https://github.com/RynerNO/command-handler-discord/blob/master/LICENSE) [![discord](https://img.shields.io/badge/JOIN-DISCORD-7289DA?style=for-the-badge)](https://discord.gg/75NmVJa)
 
 ## Installation
 
