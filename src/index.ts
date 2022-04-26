@@ -48,7 +48,6 @@ export class CommandHandler {
 	private aliases: Map<string, Alias>;
 	private parser : Parser;
 	constructor(options: Options, commandsDir: string | Array<string>) {
-		this.prefix = options.prefix || '!';
 		this.useQuotes = options.useQuotes || true;
 		this.quotesType = options.quotesType || '"';
 		this.namedSeparator = options.namedSeparator || '-';
@@ -64,9 +63,6 @@ export class CommandHandler {
 	public get Commands() {
 		return this.commands;
 	}
-	public get Prefix() {
-		return this.prefix;
-	}
 	public get UseQuotes() {
 		return this.useQuotes;
 	}
@@ -78,13 +74,6 @@ export class CommandHandler {
 	}
 	public get Aliases() {
 		return this.aliases
-	}
-	public setPrefix(prefix: string): void {
-		this.prefix = prefix
-		this.parser = createParser({
-			useQuotes: this.useQuotes,
-			quotesType: this.quotesType,
-		});
 	}
 	public disableQuotes(): void {
 		this.useQuotes = false
@@ -149,7 +138,7 @@ export class CommandHandler {
 	 * Parse command from string
 	 * @param {string} string - string to parse
 	 */
-	public command(prefix: string, string: string): Promise<{ exist: Boolean; exec: Function }> {
+	public command(prefix: string, string: string): Promise<{ cmd: Command, exist: Boolean; exec: Function }> {
 		return new Promise((resolve, reject) => {
 			if (!this.hasPrefix(prefix, string)) return;
 			let args = this.parser.parse(string)
@@ -161,12 +150,13 @@ export class CommandHandler {
 			args = parseResult.args;
 			cmd = parseResult.cmds[parseResult.cmds.length - 1]
 			return resolve( {
+				cmd: cmd,
 				exist: true,
-				exec(caller: GuildMember) {
+				exec(caller: GuildMember, customArgs: any) {
 					if (!caller || !cmd ) {
 						return;
 					}	
-					return cmd.exec(caller, args);
+					return cmd.exec(caller, args, customArgs);
 				},
 			})
 		
