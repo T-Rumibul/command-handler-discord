@@ -39,7 +39,6 @@ export interface Options {
 
 
 export class CommandHandler {
-	private prefix: string;
 	private useQuotes: boolean;
 	private quotesType: string;
 	private namedSeparator: string;
