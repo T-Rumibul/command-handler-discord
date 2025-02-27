@@ -1,7 +1,7 @@
   
 
 # Command handler discord
- [![NPM](https://img.shields.io/npm/l/command-handler-discord?style=for-the-badge)](https://github.com/RynerNO/command-handler-discord/blob/master/LICENSE) [![discord](https://img.shields.io/badge/JOIN-DISCORD-7289DA?style=for-the-badge)](https://discord.gg/75NmVJa)
+ [![NPM](https://img.shields.io/npm/l/command-handler-discord?style=for-the-badge)](https://github.com/T-Rumibul/command-handler-discord/blob/master/LICENSE)
 
 ## Installation
 
@@ -81,16 +81,8 @@ Handler.command("!test test_2") // Will return promise, promise will be resolved
 | Aliases | Map<commandAlias:string, command: Command> | Map object with aliases.|
 
 
-## Donation
-
-If you like my project please consider the [donating](https://www.donationalerts.com/r/rynerno) to support me
-
-## Support
-
-If you need help, join my [discord server](https://discord.gg/75NmVJa)
-
 ## License
 
-[MIT License](https://github.com/RynerNO/command-handler-discord/blob/master/LICENSE)
+[MIT License](https://github.com/T-Rumibul/command-handler-discord/blob/master/LICENSE)
 
-Copyright (c) 2020 [RynerNO](https://github.com/RynerNO) <ryner.no@gmail.com>
+Copyright (c) 2020 [T-Rumibul](https://github.com/T-Rumibul) <t.rumibul.work@gmail.com>

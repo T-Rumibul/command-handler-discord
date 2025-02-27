@@ -3,10 +3,10 @@
     "version": "3.0.2",
     "description": "Handler for discord commands",
     "main": "dist/index.js",
-    "author": "RynerNO",
+    "author": "T-Rumibul",
     "license": "MIT",
     "types": "dist/index.d.ts",
-    "repository": "https://github.com/RynerNO/command-handler-discord.git",
+    "repository": "https://github.com/T-Rumibul/command-handler-discord.git",
     "keywords": [
         "discord",
         "discordjs",
